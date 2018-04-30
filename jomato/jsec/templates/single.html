@@ -35,11 +35,17 @@
 		}
 		.name-review
 		{
-			font-size: 1em
+			font-size: 1.2em;
+
+			color:#004e7e;
 		}
 		.description-review
 		{
-			font-size: 1.3em
+			font-size: 0.9em;
+		}
+		.rev
+		{
+			background-color:#EEE; margin:5px 10px; padding: 10px;
 		}
 	</style>
 </head>
@@ -49,13 +55,20 @@
 
 
 	<a href="/">Back Home</a>
+	<div style="padding: 5px 30px">
 		<h4 id="title">Title</h4>
+	</div>
 		<div id="photo"></div>
 		<div style="padding: 30px">
 			<p id="description">description</p>
 
 	<br>
-		Add a Review
+	
+		<hr>
+		<h5>Reviews</h5>
+		<div id="review_box"></div>
+		<hr>
+			Add a Review
 		<label>
 
 			<span>Name</span>
@@ -71,7 +84,6 @@
 			</textarea>
 		</label>
 		<button onclick="post();">Send</button>
-		<div id="review_box"></div>
 		
 		</div>
 		
@@ -125,12 +137,13 @@
       stalls.forEach(function(f){
       	console.log(f);
       	var a = document.createElement('div');
+      	a.classList.add("rev")
       	var name=document.createElement('div');
       	name.classList.add("name-review")
       	name.innerHTML=f.name;
       	var description=document.createElement('div')
       	description.innerHTML=f.review
-      	name.classList.add("description-review")
+      	description.classList.add("description-review")
       	a.appendChild(name)
       	a.appendChild(description)
       	review_box.appendChild(a)
