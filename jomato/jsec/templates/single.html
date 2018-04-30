@@ -65,7 +65,7 @@
 	<br>
 	
 		<hr>
-		<h5>Reviews</h5>
+		<h5 id="rev-head">Reviews</h5>
 		<div id="review_box"></div>
 		<hr>
 			Add a Review
@@ -78,7 +78,7 @@
 			
 		</label>
 		<label>
-			<span>Review</span>
+			<span>Reviews</span>
 			<br>
 			<textarea type="text" id="review" style="width: 100%;">
 			</textarea>
@@ -134,6 +134,8 @@
     if (this.readyState == 4 && this.status == 200) {
       stalls=JSON.parse(this.responseText)
       review_box.innerHTML="";
+      total=0
+      i=0
       stalls.forEach(function(f){
       	console.log(f);
       	var a = document.createElement('div');
@@ -147,6 +149,9 @@
       	a.appendChild(name)
       	a.appendChild(description)
       	review_box.appendChild(a)
+      	i=i+1;
+      	document.getElementById("rev-head").innerHTML=i+" Reviews";
+
       })
     }
   };
