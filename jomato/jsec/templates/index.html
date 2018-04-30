@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css">
+	<style type="text/css">
+		body
+		{
+			border:0px;
+			margin:0px;
+			background:#EEE;
+		}
+		#stall_list
+		{
+			display: flex;
+			width:80vw;
+			justify-content: space-between;
+			flex-wrap: wrap;
+		}
+		.shadow
+		{
+			-webkit-box-shadow: 15px 15px 55px -19px rgba(0,0,0,0.75);
+			-moz-box-shadow: 15px 15px 55px -19px rgba(0,0,0,0.75);
+			box-shadow: 15px 15px 55px -19px rgba(0,0,0,0.75);
+		}
+		.box
+		{
+			margin-top: 10px;
+			flex-basis: 30%;
+			color:#333;
+			transition: all .2s ease-in-out;
+			text-decoration: none;
+			background-color: #FFF;
+			
+		}
+		.box:hover
+		{
+			transform: scale(1.05);
+			color:#333;
+			text-decoration: none;
+		}
+		.title-2
+		{
+			margin:0px;
+		}
+		.food-place-name
+		{
+			font-size: 1.3em;
+			padding: 5px
+		}
+	</style>
+</head>
+<body onload="loadXMLDoc()">
+	<div style="padding:10px 30px">
+		<h4 class="title-2">Jomato</h4>
+		<div class="title-2">Like Zomato but for JSEC</div>
+
+	<h4 class="title-2" align="center">Stalls</h4>
+
+	</div>
+<div style="width: 100vw; display:flex; justify-content: space-around;">
+	<div id="stall_list">
+	</div>
+
+
+</div>
+<div style="width:100vw; display: flex; margin: 40px 0px; justify-content: space-around;">
+
+<div></div>
+	<div class="shadow" style="padding: 30px; background:white;">
+
+	
+	<h5>Add a Stall</h5>
+		<label>
+			<span>Stall Name</span>
+			<br>
+
+			<input type="text" id="name-form" placeholder="name">
+			
+		</label>
+		<label>
+			<span>Photo URL</span>
+			<br>
+
+			<input type="text" id="photourl-form" placeholder="name">
+			
+		</label>
+		<label>
+			<span>Stall Description</span>
+			<br>
+			<textarea id="description-form"></textarea>
+			<br>
+		</label>
+		<button onclick="post();">Create</button>
+</div>
+</div>
+
+
+<script>
+stall_list=document.getElementById("stall_list")
+function loadXMLDoc() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+    	stall_list.innerHTML=""
+      stalls=JSON.parse(this.responseText)
+      console.log(stalls);
+      stalls.forEach(function(f){
+      	var a = document.createElement('a');
+      	a.href="/view?id="+f.id
+      	a.classList.add("box")
+      	a.classList.add("shadow")
+      	var photo = document.createElement('div')
+      	if (f.photourl != '')
+      	{
+      		photo.style.background="url("+f.photourl+")"
+      		photo.style.backgroundSize="cover"
+      		photo.style.backgroundPosition="50% 50%"
+      	}
+      	else
+      	{
+      		photo.style.background="red"
+      	}
+      	photo.style.height = "150px"
+      	photo.style.width = "100%"
+      	var title=document.createElement('div')
+      	title.classList.add("food-place-name")
+      	title.innerHTML = f.name
+      	a.appendChild(photo)
+      	a.appendChild(title)
+      	stall_list.appendChild(a)
+      })
+    }
+  };
+  xhttp.open("GET", "http://127.0.0.1:8000/stalls/", true);
+  xhttp.send();
+}
+
+function post()
+	{
+		$.ajax({
+		    type: "POST",
+		    url: "http://127.0.0.1:8000/stalls/",
+		    data:{
+		    	name: document.getElementById("name-form").value,
+		    	photourl:document.getElementById("photourl-form").value,
+		    	description:document.getElementById("description-form").value,
+		      csrfmiddlewaretoken: '{{ csrf_token }}'
+		    },
+		    success: function(result) {
+		    alert("Stall Added")
+		    loadXMLDoc()
+
+		    },
+
+		});
+	}
+</script>
+
+</body>
+</html>

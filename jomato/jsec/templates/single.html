@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css">
+	<title></title>
+	<style type="text/css">
+		body
+		{
+			margin:0px;
+			padding:0px;
+			display: flex;
+			justify-content: space-around;
+		}
+		#photo
+		{
+			background:tomato;
+			height:300px;
+			width: 100%;
+		}
+		.stallbox
+		{
+			width:500px;
+			background:red;
+		}
+	</style>
+</head>
+<body onload="loadXMLDoc(); loadReviewDoc();">
+	<div class="stallbox">
+
+		<h4 id="title">Title</h4>
+		<div id="photo"></div>
+		<div style="padding: 30px">
+			<p id="description">description</p>
+
+	<br>
+		Add a Review
+		<label>
+			<span>Name</span>
+			<br>
+
+			<input type="text" id="name" placeholder="name">
+			
+		</label>
+		<label>
+			<span>Review</span>
+			<br>
+			<textarea type="text" id="review" >
+			</textarea>
+		</label>
+		<button onclick="post();">Send</button>
+		<div id="review_box"></div>
+		
+		</div>
+		
+		
+	<a href="/"><HEAD></HEAD>ome</a>
+	</div>
+
+</body>
+<script type="text/javascript">
+	review_box=document.getElementById("review_box")
+	function findGetParameter(parameterName) {
+    var result = null,
+        tmp = [];
+    var items = location.search.substr(1).split("&");
+    for (var index = 0; index < items.length; index++) {
+        tmp = items[index].split("=");
+        if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+    }
+    return result;
+	}
+	 id = findGetParameter("id")
+
+	function loadXMLDoc() {
+	  var xhttp = new XMLHttpRequest();
+	  xhttp.onreadystatechange = function() {
+	    if (this.readyState == 4 && this.status == 200) {
+	      data=JSON.parse(this.responseText)
+	      document.getElementById("title").innerHTML = data.name;
+	      if (data.photourl!="")
+	      {
+	      	document.getElementById("photo").style.background="url("+data.photourl+")"
+	      	document.getElementById("photo").style.backgroundSize="cover"
+	      }
+	      document.getElementById("description").innerHTML = data.description;
+	      console.log(data);
+	    }
+
+	  };
+	  xhttp.open("GET", "http://127.0.0.1:8000/stalls/"+id, true);
+	  xhttp.send();
+	  
+	}
+</script>
+
+<script>
+	function loadReviewDoc() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      stalls=JSON.parse(this.responseText)
+      review_box.innerHTML="";
+      stalls.forEach(function(f){
+      	console.log(f);
+      	var a = document.createElement('div');
+      	var name=document.createElement('div');
+      	name.innerHTML=f.name;
+      	var description=document.createElement('div')
+      	description.innerHTML=f.review
+      	a.appendChild(name)
+      	a.appendChild(description)
+      	review_box.appendChild(a)
+      })
+    }
+  };
+  xhttp.open("GET", "http://127.0.0.1:8000/reviews/"+id, true);
+  xhttp.send();
+}
+
+
+	function post()
+	{
+		$.ajax({
+		    type: "POST",
+		    url: "http://127.0.0.1:8000/reviews/",
+		    data:{
+		    	name: document.getElementById("name").value,
+		    	review:document.getElementById("review").value,
+		    	stall_id:id,
+		      csrfmiddlewaretoken: '{{ csrf_token }}'
+		    },
+		    success: function(result) {
+		    alert("review posted")
+				loadReviewDoc();
+
+		    },
+
+		});
+	}
+</script>
+</html>
